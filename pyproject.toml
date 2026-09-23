@@ -1,0 +1,36 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mac-volume-doctor"
+version = "0.1.0"
+description = "A macOS volume-eject diagnostic suite for Time Machine, Spotlight, snapshots, and disk images."
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.8"
+authors = [{name = "zhuhroscar-tech", email = "noreply@example.com"}]
+dependencies = []
+classifiers = [
+    "Environment :: MacOS X",
+    "Intended Audience :: End Users/Desktop",
+    "Programming Language :: Python :: 3",
+    "Operating System :: MacOS :: MacOS X",
+]
+
+[project.urls]
+Homepage = "https://github.com/zhuhroscar-tech/mac-volume-doctor"
+Issues = "https://github.com/zhuhroscar-tech/mac-volume-doctor/issues"
+
+[project.scripts]
+mac-volume-doctor = "mac_volume_doctor.cli:main"
+mac-tm-doctor = "mac_volume_doctor.checks.tm:main"
+
+[project.optional-dependencies]
+test = ["pytest"]
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
