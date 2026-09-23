@@ -4,11 +4,10 @@ import argparse
 import sys
 from typing import Optional
 
-from mac_volume_doctor.checks import tm, tm_snapshot
+from mac_volume_doctor.checks import spotlight, tm, tm_snapshot
 
 
 PLANNED_CHECKS = {
-    "spotlight": "planned: Spotlight indexing and open-handle inspection",
     "dmg": "planned: disk image resource-busy inspection",
 }
 
@@ -35,6 +34,14 @@ def build_parser() -> argparse.ArgumentParser:
         add_help=False,
     )
     tm_snapshot_parser.set_defaults(func=tm_snapshot._run)
+
+    spotlight_parser = subparsers.add_parser(
+        "spotlight",
+        help="inspect Spotlight indexing state and open-handle blockers",
+        parents=[spotlight.build_parser()],
+        add_help=False,
+    )
+    spotlight_parser.set_defaults(func=spotlight._run)
 
     for name, description in PLANNED_CHECKS.items():
         planned = subparsers.add_parser(name, help=description)
