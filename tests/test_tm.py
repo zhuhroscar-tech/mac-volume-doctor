@@ -64,20 +64,21 @@ class TMReportTests(unittest.TestCase):
 
     def test_json_render(self) -> None:
         target = "/Volumes/Test"
-
-        def fake_runner(cmd):
-            if cmd[0] == "lsof":
-                return self._complete(cmd, stdout="COMMAND PID USER FD TYPE DEVICE SIZE/OFF NODE NAME\n")
-            if cmd == ["tmutil", "status"]:
-                return self._complete(cmd, stdout='"Running" = 0;\n"CurrentPhase" = "BackupNotRunning";')
-            if cmd == ["tmutil", "destinationinfo"]:
-                return self._complete(cmd, stdout="")
-            if cmd[0:2] == ["diskutil", "info"]:
-                return self._complete(cmd, stdout="Volume Name: Test\nMount Point: /Volumes/Test\n")
-            raise AssertionError(f"unexpected cmd {cmd}")
-
+        report = {
+            "check": "tm",
+            "target": target,
+            "mountPoint": target,
+            "blockers": [],
+            "timeMachine": {
+                "status": {"running": False, "currentPhase": "BackupNotRunning"},
+                "isConfiguredTarget": False,
+                "destinationMounts": [],
+            },
+            "diskInfo": {"Volume Name": "Test", "Mount Point": target},
+            "suggestions": ["No active Time Machine or open-handle blockers detected."],
+        }
         namespace = tm.argparse.Namespace(target=target, json=True, stop_backup=False, wait=0)
-        with mock.patch("builtins.print"):
+        with mock.patch("mac_volume_doctor.checks.tm.run_diagnostic", return_value=report), mock.patch("builtins.print"):
             rc = tm._run(namespace)
         self.assertEqual(rc, 0)
 
