@@ -4,12 +4,7 @@ import argparse
 import sys
 from typing import Optional
 
-from mac_volume_doctor.checks import spotlight, tm, tm_snapshot
-
-
-PLANNED_CHECKS = {
-    "dmg": "planned: disk image resource-busy inspection",
-}
+from mac_volume_doctor.checks import dmg, spotlight, tm, tm_snapshot
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -43,16 +38,15 @@ def build_parser() -> argparse.ArgumentParser:
     )
     spotlight_parser.set_defaults(func=spotlight._run)
 
-    for name, description in PLANNED_CHECKS.items():
-        planned = subparsers.add_parser(name, help=description)
-        planned.set_defaults(func=_planned_check, planned_check=name)
+    dmg_parser = subparsers.add_parser(
+        "dmg",
+        help="inspect mounted DMG/sparse image and resource-busy blockers",
+        parents=[dmg.build_parser()],
+        add_help=False,
+    )
+    dmg_parser.set_defaults(func=dmg._run)
 
     return parser
-
-
-def _planned_check(args: argparse.Namespace) -> int:
-    print(f"mac-volume-doctor {args.planned_check}: this check is planned but not migrated yet.")
-    return 64
 
 
 def main(argv: Optional[list[str]] = None) -> int:

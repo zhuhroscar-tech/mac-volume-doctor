@@ -90,11 +90,12 @@ class RootCLITests(unittest.TestCase):
         self.assertEqual(rc, 0)
         self.assertEqual(run.call_args.args[0].target, "/Volumes/Test")
 
-    def test_planned_check_reports_not_migrated(self) -> None:
-        with mock.patch("builtins.print") as printed:
-            rc = root_cli.main(["dmg"])
-        self.assertEqual(rc, 64)
-        self.assertIn("not migrated yet", printed.call_args.args[0])
+    def test_root_dispatches_dmg_check(self) -> None:
+        with mock.patch("mac_volume_doctor.checks.dmg._run", return_value=0) as run:
+            rc = root_cli.main(["dmg", "inspect", "/Volumes/Test"])
+        self.assertEqual(rc, 0)
+        self.assertEqual(run.call_args.args[0].command, "inspect")
+        self.assertEqual(run.call_args.args[0].path, "/Volumes/Test")
 
 
 if __name__ == "__main__":

@@ -2,11 +2,11 @@
 
 A macOS CLI suite for diagnosing why external volumes, Time Machine disks, local snapshots, Spotlight indexes, or mounted disk images block normal eject/unmount workflows.
 
-This package is the consolidation target for the former single-purpose `mac-*-doctor` tools. Migrated checks currently cover Time Machine destination blockers, Time Machine local snapshots, and Spotlight indexing/open-handle blockers.
+This package is the consolidation target for the former single-purpose `mac-*-doctor` tools. Migrated checks currently cover Time Machine destination blockers, Time Machine local snapshots, Spotlight indexing/open-handle blockers, and mounted DMG/sparse image resource-busy blockers.
 
 ## Install
 
-Requires macOS, Python 3.8+, and Apple's system tools used by each check. The Time Machine destination check uses `lsof`, `tmutil`, and `diskutil`; the snapshot check uses `tmutil`; the Spotlight check uses `lsof`, `mdutil`, and `diskutil`.
+Requires macOS, Python 3.8+, and Apple's system tools used by each check. The Time Machine destination check uses `lsof`, `tmutil`, and `diskutil`; the snapshot check uses `tmutil`; the Spotlight check uses `lsof`, `mdutil`, and `diskutil`; the DMG check uses `mount`, `lsof`, and `hdiutil`.
 
 ```bash
 git clone https://github.com/zhuhroscar-tech/mac-volume-doctor.git
@@ -44,12 +44,21 @@ mac-volume-doctor spotlight --json "/Volumes/External"
 mac-volume-doctor spotlight --spotlight status "/Volumes/External"
 ```
 
+Inspect mounted DMG/sparse image resource-busy blockers:
+
+```bash
+mac-volume-doctor dmg scan
+mac-volume-doctor dmg --json scan
+mac-volume-doctor dmg inspect "/Volumes/TestImage"
+```
+
 For compatibility during migration, installing this package also exposes:
 
 ```bash
 mac-tm-doctor "/Volumes/Time Machine"
 mac-tm-snapshot-doctor --volume / list
 mac-spotlight-doctor "/Volumes/External"
+mac-dmg-doctor scan
 ```
 
 ## Checks
@@ -59,7 +68,7 @@ mac-spotlight-doctor "/Volumes/External"
 | `tm` | migrated | Open-file holders, Time Machine status, configured backup destinations, disk metadata, and next-step guidance. |
 | `tm-snapshot` | migrated | Local snapshot inventory, known snapshot paths, backup-status fields, and manual cleanup guidance. |
 | `spotlight` | migrated | Spotlight indexing state, open-handle context, likely holder classification, and optional indexing toggle commands. |
-| `dmg` | planned | Mounted disk-image and resource-busy diagnostics. |
+| `dmg` | migrated | Mounted DMG/sparse image associations, open handles, busy mount scan, and detach guidance. |
 
 ## Safety
 
