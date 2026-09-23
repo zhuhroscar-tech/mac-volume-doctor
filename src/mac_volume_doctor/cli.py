@@ -4,11 +4,10 @@ import argparse
 import sys
 from typing import Optional
 
-from mac_volume_doctor.checks import tm
+from mac_volume_doctor.checks import tm, tm_snapshot
 
 
 PLANNED_CHECKS = {
-    "tm-snapshot": "planned: Time Machine local snapshot inspection",
     "spotlight": "planned: Spotlight indexing and open-handle inspection",
     "dmg": "planned: disk image resource-busy inspection",
 }
@@ -28,6 +27,14 @@ def build_parser() -> argparse.ArgumentParser:
         add_help=False,
     )
     tm_parser.set_defaults(func=tm._run)
+
+    tm_snapshot_parser = subparsers.add_parser(
+        "tm-snapshot",
+        help="inspect Time Machine local snapshots and backup status",
+        parents=[tm_snapshot.build_parser()],
+        add_help=False,
+    )
+    tm_snapshot_parser.set_defaults(func=tm_snapshot._run)
 
     for name, description in PLANNED_CHECKS.items():
         planned = subparsers.add_parser(name, help=description)

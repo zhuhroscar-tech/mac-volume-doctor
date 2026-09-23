@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "mac-volume-doctor"
-version = "0.1.0"
+version = "0.2.0"
 description = "A macOS volume-eject diagnostic suite for Time Machine, Spotlight, snapshots, and disk images."
 readme = "README.md"
 license = "MIT"
@@ -25,6 +25,7 @@ Issues = "https://github.com/zhuhroscar-tech/mac-volume-doctor/issues"
 [project.scripts]
 mac-volume-doctor = "mac_volume_doctor.cli:main"
 mac-tm-doctor = "mac_volume_doctor.checks.tm:main"
+mac-tm-snapshot-doctor = "mac_volume_doctor.checks.tm_snapshot:main"
 
 [project.optional-dependencies]
 test = ["pytest"]
